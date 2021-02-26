@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="it">
+    <head>
+        <meta charset= "utf-8">
+        <meta name="viewpart" content="width=device-width, initial-scale=1">
+        <title>Ripetizione sui cicli</title>
+
+        <!--Metadati di p5.js-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.js"></script>
+        <style>
+            html, body { margin: 0; padding: 0; background-color: "red"}
+            canvas { display: block; }
+        </style>
+    </head>
+    <body>
+        <h2>Ripetizione sui cicli (for, while, do-while)</h2>
+
+        <script>
+            class Colore {
+                constructor(r, g, b) {
+                    this.r = r;
+                    this.g = g;
+                    this.b = b;
+                }
+            }
+
+            class PallinaColorata {
+                constructor(x, y, d, c) {
+                    this.x = x;
+                    this.y = y;
+                    this.d = d;
+                    this.color = c;
+                }
+            }
+
+            const diameter = 24;
+            const radius = diameter/2;
+
+            let snake = [];
+            const snakeColor = new Colore(0, 255, 0);
+            const labirintColor = new Colore(255, 0, 0);
+            const preyColor = new Colore(0, 0, 255);
+
+            let directionKey = "ArrowDown";
+
+            let X, Y;
+
+            let prey = new PallinaColorata(radius*9, radius*9, diameter, preyColor);
+
+            function setup() {
+                createCanvas(800, 400);
+
+                snake[0] = new PallinaColorata(radius*3, radius, diameter, snakeColor);
+                snake[1] = new PallinaColorata(radius*3, radius*3, diameter, snakeColor);
+            }
+
+            function draw() {
+                background(0, 0, 0);
+
+                // disegno le possibili posizioni dello snake
+                X=radius;
+                while(X<=width-radius) {
+                    for (Y=radius;Y<=height-radius;Y=Y+diameter) {
+                        fill(255, 0, 0);
+                        circle(X,Y,diameter);
+                    }
+                    X=X+diameter;
+                }
+
+                // disegno lo snake
+                for (let i=0; i<snake.length; i++) {
+                    fill(snake[i].color.r,snake[i].color.g,snake[i].color.b);
+                    circle(snake[i].x,snake[i].y,snake[i].d);
+                }
+                console.info(`Snake length: ${snake.length}`);
+
+                // disegno la preda
+                fill(preyColor.r,preyColor.g,preyColor.b);
+                circle(prey.x,prey.y,prey.d);
+
+                // aggiungo una pallina allo snake
+                fill(snakeColor.r,snakeColor.g,snakeColor.b);
+                snake[snake.length] = new PallinaColorata(snake[snake.length-1].x, snake[snake.length-1].y, diameter, snakeColor);
+
+                // Sposto la testa in direzione del tasto
+                directionKey = key != "" ? key : directionKey;
+                console.info(key);
+
+                switch (directionKey) {
+                    case "ArrowUp":
+                        snake[snake.length-1].y = snake[snake.length-1].y - diameter;
+                        break;
+                    case "ArrowDown":
+                        snake[snake.length-1].y = snake[snake.length-1].y + diameter;
+                        break;
+                    case "ArrowRight":
+                        snake[snake.length-1].x = snake[snake.length-1].x + diameter;
+                        break;
+                    case "ArrowLeft":
+                        snake[snake.length-1].x = snake[snake.length-1].x - diameter;
+                        break;
+                    default:
+                }
+
+                // Sposto la coda di un elemento
+                // SE non ho catturato la preda
+                console.info(`Prey: ${prey.x} ${prey.y}`);
+                if (prey.x != snake[snake.length-1].x || prey.y != snake[snake.length-1].y) {
+                    // IMPORTANTE sposto la coda di un elemento
+                    snake.shift();
+                }
+
+            }
+        </script>
+    </body>
+</html>
