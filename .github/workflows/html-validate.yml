@@ -21,4 +21,4 @@ jobs:
       uses: chabad360/htmlproofer@master
       with:
         directory: "./"
-        arguments: "--check_opengraph --check-html"
+        arguments: "--check_opengraph --check-html --enforce-https --report-invalid-tags --report-missing-names --report-missing-doctype --report-eof-tags --report-mismatched-tags"
