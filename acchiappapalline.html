@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="it">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title> AcchiappaPalline </title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.js"> </script>
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+
+<body onload="window.alert('Sei pronto a giocare?')">
+
+  <h2>Acchiappa Palline</h2>
+
+  <script>
+    //Coordinata X di 20 palline
+    let arrayX = [];
+    //Coordinata Y di 20 palline
+    let arrayY = [];
+    //Coordinata del diamentro di 20 palline
+    let Diametro = 50;
+    //Indice
+    let I;
+    //Variabile per l'incremento
+    let IncrementoY = 3;
+    //Variabile per il punteggio
+    let score = 0;
+
+    function setup() {
+      createCanvas(800, 600);
+
+      //Funzione per lo spawn casuale della posizione delle palline
+      for (I = 0; I < 20; I++) {
+        arrayX[I] = Math.random() * 800;
+        arrayY[I] = Math.random() * -300;
+      }
+    }
+
+    function draw() {
+      background(0, 0, 0);
+
+      //Funzione per le coordinate delle palline
+      for (I = 0; I < 20; I++) {
+        //colore blu RGB
+        fill(0, 0, 255);
+        circle(arrayX[I], arrayY[I], Diametro);
+      }
+
+      //Incremento della coordinata Y delle palline
+      for (I = 0; I < 20; I++) {
+        arrayY[I] = arrayY[I] + IncrementoY;
+      }
+
+      //Ciclo per far si che le palline scendano di continuo dall'alto a blocchi di 20 alla volta
+      //L'if serve per far toccare le palline sul bordo inferiore
+      for (I = 0; I < 20; I++) {
+        if (arrayY[I] > 800 - Diametro / 2) {
+          arrayX[I] = Math.random() * 800 - Diametro / 2;
+          arrayY[I] = Math.random() * -400;
+          //Se la pallina tocca il bordo inferiore il punteggio scende
+          score--;
+        }
+      }
+
+      //Ciclo per far resettare le palline una volta toccata la racchetta
+      //Il primo if serve per far toccare la pallina esattamente sulla racchetta
+      //Il secondo if serve per far toccare la pallina sia al centro che negli angoli in alto della racchetta
+      for (I = 0; I < 20; I++) {
+        if (arrayY[I] >= 525 && arrayY[I] <= 575) {
+          if (arrayX[I] < mouseX + 75 && arrayX[I] > mouseX - 50) {
+            arrayX[I] = Math.random() * (750 - Diametro / 2) + Diametro / 2;;
+            arrayY[I] = Math.random() * -300;
+            //Se la pallina tocca la racchetta il punteggio sale
+            score++;
+          }
+        }
+      }
+
+      //Testo per indicare il punteggio durante il gioco
+      //colore verde RGB
+      fill(0, 255, 0);
+      textSize(18);
+      text("Score=" + score, 710, 30);
+
+      //Gestione limite della posizione della racchetta
+
+      //se la coordinata X del mouse è maggiore o uguale di 750, la coordinata X del mouse sarà uguale a 750
+      if (mouseX >= 750) {
+        mouseX = 750;
+      }
+
+      //se la coordinata X del mouse è minore o uguale di 30, la coordinata X del mouse sarà uguale a 30
+      if (mouseX <= 30) {
+        mouseX = 30;
+      }
+
+      //Racchetta
+      //colore rosso RGB
+      fill(255, 0, 0);
+      rect(mouseX - 30, 550, 80, 50);
+
+      //Funzione per la vittoria
+      //Una volta che il giocatore sara riuscito ad ottenere un punteggio di 100 palline, apparira sullo schermo la schermata di vittortia
+      if (score >= 100) {
+        background(0, 0, 0);
+        fill(255, 255, 0);
+        textSize(100);
+        text("HAI VINTO!", 100, 340);
+        noLoop();
+      }
+
+      //Funzione per partita persa
+      //Se il giocatore fara un punteggio inferiore o uguale a 20 palline, apparira sullo schermo la schermata di perdita
+      if (score <= -20) {
+        background(0, 0, 0);
+        fill(255, 0, 0);
+        textSize(100);
+        text("HAI PERSO!", 100, 340);
+        noLoop();
+      }
+
+    }
+  </script>
+</body>
